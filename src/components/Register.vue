@@ -1,64 +1,66 @@
 <template>
-    <div class="card" align="left">
-            <div class="card-header">Register Form</div>
-            <div class="card-body">
-                <form  @submit.prevent="saveData">
-                <label>First Name</label>
-                <input type="text" v-model="userBook.name" name="name" id="name" class ="form-control"/>
-                <label>Email</label>
-                <input type="email" v-model="userBook.email" name="email" id="email" class ="form-control"/>
-                <label>Password</label>
-                <input type="password" v-model="userBook.password" name="password" id="password" class ="form-control"/>
-                <label>Confirm Password</label>
-                <input type="password" v-model="userBook.confirmPassword" name="password" id="password" class ="form-control"/>
-                <input type="submit" value="Save" class="btn btn-success">
+    <div class="container">
+        <!-- <AdminHeader /> -->
+        <div class="row justify-content-center">
+            <div class="col-sm-6 mt-4">
+                <form @submit.prevent="register()">
+                    <div class="form-group mt-3">
+                        <label for="name">Name:</label>
+                        <input type="name" class="form-control" v-model="form.name" id="name" />
+                        <p class="text-danger" v-if="errors && errors.name">{{ errors['name'][0] }}</p>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="email">Email Address:</label>
+                        <input type="email" class="form-control" v-model="form.email" id="email" />
+                        <p class="text-danger" v-if="errors && errors.email">{{ errors['email'][0] }}</p>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="password">Password:</label>
+                        <input type="password" class="form-control" v-model="form.password" id="password" />
+                        <p class="text-danger" v-if="errors && errors.password">{{ errors['password'][0] }}</p>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="confirm_password">Confirm Password:</label>
+                        <input type="password" class="form-control" v-model="form.confirmPassword" id="confirm_password" />
+                        <p class="text-danger" v-if="errors && errors.password">{{ errors['password'][0] }}
+                        </p>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3">Register</button>
                 </form>
             </div>
         </div>
-    </template>
+    </div>
+</template>
 <script>
-import Vue from 'vue'
 import axios from 'axios'
-Vue.use(axios)
+// import AdminHeader from '../../components/Admin/AdminHeader.vue'
 export default {
-  name: 'Register',
+  // components: { AdminHeader },
   data () {
     return {
-      result: {},
-      userBook: {
+      form: {
         name: '',
         email: '',
-        password: ''
-      }
-    }
-  },
-  created () {
-  },
-  mounted () {
-    console.log('mounted() called.......')
-    this.userBook.inputs = JSON.parse(localStorage.getItem('form')) || []
-  },
-  watch: {
-    user: {
-      handler: function () {
-        localStorage.setItem('form', JSON.stringify(this.userBook.inputs))
+        password: '',
+        confirmPassword: ''
       },
-      deep: true
+      errors: []
     }
   },
   methods: {
-    saveData () {
-      axios.post('http://127.0.0.1:8000/api/v1/auth/register', this.userBook)
-        .then(
-          ({data}) => {
-            console.log(data)
-            try {
-              alert('saveddddd')
-            } catch (err) {
-              alert('failed')
-            }
+    register () {
+      this.errors = []
+      axios.get('http://127.0.0.1:8000' + '/sanctum/csrf-cookie').then(response => {
+        axios.post('http://127.0.0.1:8000' + '/api/v1/auth/register', this.form).then(response => {
+          if (response.status === 201) {
+            localStorage.setItem('token', response.data.response.accessToken)
+            this.$router.push({ name: 'admin.dashboard' })
           }
-        )
+        }).catch((e) => {
+          this.errors = e.response.data.errors
+          console.log(this.errors)
+        })
+      })
     }
   }
 }
