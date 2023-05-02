@@ -47,9 +47,9 @@ export default {
             Authorization: `Bearer ${token}`
           }
         }).then(response => {
-          console.log(response)
           if (response.status === 200) {
             localStorage.removeItem('token')
+            this.$router.push({ name: 'Login' })
           }
         }).catch((e) => {
           this.errors = e.response.data.errors
