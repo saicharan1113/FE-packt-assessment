@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <!-- <AdminHeader /> -->
+        <Navbar/>
         <div class="row justify-content-center">
             <div class="col-sm-6 mt-4">
                 <p class="text-danger" v-if="errors && errors.message">{{ errors.message }}</p>
@@ -23,9 +23,9 @@
 </template>
 <script>
 import axios from 'axios'
-// import AdminHeader from '../../components/Admin/AdminHeader.vue'
+import Navbar from './Navbar.vue'
 export default {
-//   components: { AdminHeader },
+  components: { Navbar },
   data () {
     return {
       form: {
