@@ -10,7 +10,7 @@
                 <form class="d-flex center" @submit.prevent="getData">
                     <input class="form-control me-2" @input="getData" v-model="searchText" type="search"
                         placeholder="Search by title-author-published-isbn-genre-publisher..." aria-label="Search">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
+                    <button class="btn btn-outline-warning" type="submit">Search</button>
                 </form>
             </div>
             <div class="col-2">
@@ -30,8 +30,8 @@
                             </div>
                             <div class="card-body">
                                 <router-link :to="{
-                                    name: 'show',
-                                    params: { id: book.uniqueBookId }
+                                    name: 'showBook',
+                                    params: { uniqueBookId: book.uniqueBookId }
                                 }">
                                     <h5 class="card-title">{{ book.title }}</h5>
                                 </router-link>
@@ -44,10 +44,11 @@
                 </div>
                 <div class="row mt-2">
                     <nav aria-label="Page navigation example">
-                        <ul class="pagination justify-content-end">
-                            <!-- <li class="page-item" v-for="link in pagination.links"> e' : ''"
-                                <button @click="getPageData(link.url)" v-html="link.label"></button>
-                            </li> -->
+                        <ul class="pagination justify-content-center">
+                            <li v-for="link in pagination.links" :key="link.uniqueBookId" class="page-item" :class="link.url ? '': 'disabled'">
+                                <a class="page-link" :class="link.active ? 'active' : ''" href="#" @click="getPageData(link.url)" v-html="link.label">
+                                </a>
+                            </li>
                         </ul>
                     </nav>
                 </div>
@@ -79,10 +80,10 @@ export default {
     }
   },
   mounted () {
-    this.getData()
+    this.getData(this.url)
   },
   methods: {
-    getData () {
+    getData (url) {
       let data = {}
       if (this.searchText) {
         data = { search: this.searchText }
@@ -90,7 +91,7 @@ export default {
       if (Object.keys(this.filters).length > 0) {
         Object.assign(data, this.filters)
       }
-      axios.get(this.url, { params: data })
+      axios.get(url, { params: data })
         .then(response => {
           this.books = response.data.data
           this.pagination.links = response.data.meta.links
@@ -108,7 +109,7 @@ export default {
     },
     getPageData (url) {
       this.url = url
-      this.getData()
+      this.getData(this.url)
     },
     getFilterData (data) {
       this.filters = data

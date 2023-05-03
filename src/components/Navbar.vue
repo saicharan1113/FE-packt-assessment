@@ -1,6 +1,6 @@
 <template>
 <div>
-    <nav class="navbar navbar-expand-lg navbar-primary bg-light">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">Packt Book Store</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
@@ -49,7 +49,7 @@ export default {
         }).then(response => {
           if (response.status === 200) {
             localStorage.removeItem('token')
-            this.$router.push({ name: 'Login' })
+            this.$router.push({ name: '/' })
           }
         }).catch((e) => {
           this.errors = e.response.data.errors

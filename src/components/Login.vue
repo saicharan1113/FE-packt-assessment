@@ -40,11 +40,9 @@ export default {
       this.errors = []
       axios.get('http://127.0.0.1:8000' + '/sanctum/csrf-cookie').then(response => {
         axios.post('http://127.0.0.1:8000' + '/api/v1/auth/login', this.form).then(response => {
-          console.log(process.env)
-          console.log(process.env.port)
           if (response.status === 200) {
             localStorage.setItem('token', response.data.response.accessToken)
-            this.$router.push({ name: 'admin.dashboard' })
+            this.$router.push({ name: '/' })
           }
         }).catch((e) => {
           this.errors = e.response.data
