@@ -7,9 +7,9 @@
             <div class="col-4">
             </div>
             <div class="col-6">
-                <form class="d-flex center" @submit.prevent="getData">
-                    <input class="form-control me-2" @input="getData" v-model="searchText" type="search"
-                        placeholder="Search by title-author-published-isbn-genre-publisher..." aria-label="Search">
+                <form class="d-flex center" @submit.prevent="getData()">
+                    <input class="form-control me-2" v-model="searchText" type="text"
+                        placeholder="Search by title author published isbn genre publisher" aria-label="Search">
                     <button class="btn btn-outline-warning" type="submit">Search</button>
                 </form>
             </div>
@@ -35,7 +35,6 @@
                                 }">
                                     <h5 class="card-title">{{ book.title }}</h5>
                                 </router-link>
-                                <!-- <p class="card-text">{{ book.description }}</p> -->
                                 <p class="font-weight-bold">{{ book.published }}, {{ book.publisher }}</p>
                                 <p class="font-weight-bold">Author: {{ book.author }}</p>
                             </div>
@@ -80,10 +79,10 @@ export default {
     }
   },
   mounted () {
-    this.getData(this.url)
+    this.getData()
   },
   methods: {
-    getData (url) {
+    getData () {
       let data = {}
       if (this.searchText) {
         data = { search: this.searchText }
@@ -91,7 +90,7 @@ export default {
       if (Object.keys(this.filters).length > 0) {
         Object.assign(data, this.filters)
       }
-      axios.get(url, { params: data })
+      axios.get(this.url, { params: data })
         .then(response => {
           this.books = response.data.data
           this.pagination.links = response.data.meta.links
@@ -109,7 +108,7 @@ export default {
     },
     getPageData (url) {
       this.url = url
-      this.getData(this.url)
+      this.getData()
     },
     getFilterData (data) {
       this.filters = data
